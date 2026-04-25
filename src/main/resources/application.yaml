@@ -1,0 +1,25 @@
+spring:
+  flyway:
+    enabled: false
+  application:
+    name: api-schuquiej-dev
+  profiles:
+    active: prod
+  jackson:
+    time-zone: UTC
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: 8082
+
+app:
+security:
+  api-key:
+    enabled: true
+    header-name: X-API-KEY
+    value: ${API_KEY:SCHUQUIEJ202600}
+logging:
+  level:
+    root: INFO
+    org.springframework.security: INFO
