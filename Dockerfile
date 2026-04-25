@@ -16,10 +16,10 @@ FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
 # Copiamos el .jar generado en la Etapa 1 a esta nueva etapa
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/target/mi-api-0.0.1-SNAPSHOT.jar app.jar
 
 # Exponemos el puerto
 EXPOSE 8082
-
+RUN ls -l /app
 # Comando para arrancar la aplicación
 ENTRYPOINT ["java", "-jar", "app.jar"]
