@@ -25,6 +25,17 @@ public class ApiKeyInterceptor implements HandlerInterceptor {
             return true;
         }
 
+
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
+
+        if (!props.isEnabled()) {
+            return true;
+        }
+
+
+
         String provided = request.getHeader(props.getHeaderName());
         String expected = props.getValue();
 
