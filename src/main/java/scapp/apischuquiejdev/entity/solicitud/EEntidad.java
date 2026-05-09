@@ -1,4 +1,6 @@
-package scapp.apischuquiejdev.entity;
+package scapp.apischuquiejdev.entity.solicitud;
+
+
 
 
 import jakarta.persistence.*;
@@ -12,33 +14,24 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class EEntidad {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombre", nullable = false, length = 150, unique = true)
+    @Column(name = "nombre", nullable = false, length = 150)
     private String nombre;
 
-    @Column(name = "nit", length = 30)
-    private String nit;
+    @Column(name = "tipo", nullable = false, length = 50)
+    private String tipo;
 
-    @Column(name = "telefono", length = 30)
-    private String telefono;
-
-    @Column(name = "correo", length = 150)
-    private String correo;
-
-    @Column(name = "direccion", length = 250)
+    @Column(name = "direccion")
     private String direccion;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 20)
-    private EstadoEntidad estado = EstadoEntidad.ACTIVA;
+    private String estado = "ACTIVO";
 
-    @Column(name = "observaciones", columnDefinition = "TEXT")
-    private String observaciones;
-
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
@@ -49,12 +42,11 @@ public class EEntidad {
         LocalDateTime now = LocalDateTime.now();
         this.createdAt = now;
         this.updatedAt = now;
-        this.estado = this.estado == null ? EstadoEntidad.ACTIVA : this.estado;
+        this.estado = this.estado == null ? "ACTIVO" : this.estado;
     }
 
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
 }

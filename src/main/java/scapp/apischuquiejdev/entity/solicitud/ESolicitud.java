@@ -1,10 +1,8 @@
 package scapp.apischuquiejdev.entity.solicitud;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import scapp.apischuquiejdev.entity.EEntidad;
 import scapp.apischuquiejdev.entity.persona.EPersona;
 
 import java.math.BigDecimal;
@@ -17,7 +15,6 @@ import java.util.List;
 @Getter
 @Setter
 public class ESolicitud {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,9 +37,11 @@ public class ESolicitud {
     @Column(name = "peso_solicitado", nullable = false, precision = 12, scale = 2)
     private BigDecimal pesoSolicitado;
 
+    @Column(name = "peso_total_enviado", nullable = false, precision = 12, scale = 2)
+    private BigDecimal pesoTotalEnviado = BigDecimal.ZERO;
+
     @Column(name = "margen_permitido_porcentaje", nullable = false, precision = 5, scale = 2)
     private BigDecimal margenPermitidoPorcentaje = BigDecimal.ZERO;
-
 
     @Column(name = "peso_total_recibido", nullable = false, precision = 12, scale = 2)
     private BigDecimal pesoTotalRecibido = BigDecimal.ZERO;
@@ -60,10 +59,10 @@ public class ESolicitud {
     @Column(name = "observaciones", columnDefinition = "TEXT")
     private String observaciones;
 
-    @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, orphanRemoval = false)
-    private List<ESolicitudEnvio> envios = new ArrayList<>();
+    @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ESolicitudParcialidad> parcialidades = new ArrayList<>();
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
@@ -75,8 +74,9 @@ public class ESolicitud {
         this.fechaSolicitud = this.fechaSolicitud == null ? now : this.fechaSolicitud;
         this.createdAt = now;
         this.updatedAt = now;
-        this.pesoPendiente = this.pesoSolicitado != null ? this.pesoSolicitado : BigDecimal.ZERO;
 
+        this.pesoPendiente = this.pesoSolicitado != null ? this.pesoSolicitado : BigDecimal.ZERO;
+        this.pesoTotalEnviado = this.pesoTotalEnviado == null ? BigDecimal.ZERO : this.pesoTotalEnviado;
         this.pesoTotalRecibido = this.pesoTotalRecibido == null ? BigDecimal.ZERO : this.pesoTotalRecibido;
         this.margenPermitidoPorcentaje = this.margenPermitidoPorcentaje == null ? BigDecimal.ZERO : this.margenPermitidoPorcentaje;
         this.estado = this.estado == null ? EstadoSolicitud.PENDIENTE : this.estado;
@@ -87,4 +87,9 @@ public class ESolicitud {
         this.updatedAt = LocalDateTime.now();
     }
 
+    // Método helper vital para el guardado en cascada
+    public void addParcialidad(ESolicitudParcialidad parcialidad) {
+        parcialidades.add(parcialidad);
+        parcialidad.setSolicitud(this);
+    }
 }
