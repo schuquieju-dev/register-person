@@ -6,13 +6,12 @@ import java.util.List;
 
 @Data
 public class SolicitudCompletaRequest {
-
     private Long personaId;
     private Long entidadId;
-    private String producto;
+    private Long productoId;
+    private BigDecimal precioUnitarioPactado;
     private BigDecimal pesoSolicitado;
+    private BigDecimal margenPermitidoPorcentaje;
     private String observaciones;
-
-    // Lista de viajes (Detalles)
     private List<ViajeRequest> parcialidades;
 }

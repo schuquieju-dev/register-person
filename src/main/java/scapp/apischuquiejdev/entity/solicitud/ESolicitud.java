@@ -6,6 +6,7 @@ import lombok.Setter;
 import scapp.apischuquiejdev.entity.persona.EPersona;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,13 @@ public class ESolicitud {
     @JoinColumn(name = "entidad_id", nullable = false)
     private EEntidad entidad;
 
-    @Column(name = "producto", nullable = false, length = 150)
-    private String producto;
+    // Relación al catálogo de productos (Cafés)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "producto_id", nullable = false)
+    private EProductoCatalogo producto;
+
+    @Column(name = "precio_unitario_pactado", nullable = false, precision = 12, scale = 2)
+    private BigDecimal precioUnitarioPactado;
 
     @Column(name = "cantidad_solicitada", precision = 12, scale = 2)
     private BigDecimal cantidadSolicitada;
@@ -43,11 +49,7 @@ public class ESolicitud {
     @Column(name = "margen_permitido_porcentaje", nullable = false, precision = 5, scale = 2)
     private BigDecimal margenPermitidoPorcentaje = BigDecimal.ZERO;
 
-    @Column(name = "peso_total_recibido", nullable = false, precision = 12, scale = 2)
-    private BigDecimal pesoTotalRecibido = BigDecimal.ZERO;
 
-    @Column(name = "peso_pendiente", nullable = false, precision = 12, scale = 2)
-    private BigDecimal pesoPendiente = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 30)
@@ -68,6 +70,25 @@ public class ESolicitud {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+
+
+
+    @Column(name = "peso_total_recibido", nullable = false, precision = 12, scale = 2)
+    private BigDecimal pesoTotalRecibido = BigDecimal.ZERO;
+
+    @Column(name = "peso_pendiente", nullable = false, precision = 12, scale = 2)
+    private BigDecimal pesoPendiente = BigDecimal.ZERO;
+
+    // --- NUEVOS CAMPOS PARA LIQUIDACIÓN ---
+
+    @Column(name = "diferencia_peso", precision = 12, scale = 2)
+    private BigDecimal diferenciaPeso = BigDecimal.ZERO; // (Recibido - Solicitado)
+
+    @Column(name = "porcentaje_desviacion", precision = 5, scale = 2)
+    private BigDecimal porcentajeDesviacion = BigDecimal.ZERO;
+
+    // ... (enums y fechas se mantienen igual) ...
+
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
@@ -79,15 +100,35 @@ public class ESolicitud {
         this.pesoTotalEnviado = this.pesoTotalEnviado == null ? BigDecimal.ZERO : this.pesoTotalEnviado;
         this.pesoTotalRecibido = this.pesoTotalRecibido == null ? BigDecimal.ZERO : this.pesoTotalRecibido;
         this.margenPermitidoPorcentaje = this.margenPermitidoPorcentaje == null ? BigDecimal.ZERO : this.margenPermitidoPorcentaje;
-        this.estado = this.estado == null ? EstadoSolicitud.PENDIENTE : this.estado;
+        this.estado = (this.estado == null) ? EstadoSolicitud.PENDIENTE : this.estado;
     }
 
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
+        // Cada vez que se actualiza, recalculamos el pendiente
+        recalcularBalances();
     }
 
-    // Método helper vital para el guardado en cascada
+    /**
+     * Método interno para calcular cuánto falta, excedentes y desviaciones.
+     */
+    public void recalcularBalances() {
+        if (this.pesoSolicitado != null && this.pesoSolicitado.compareTo(BigDecimal.ZERO) > 0) {
+            // 1. Peso Pendiente: Solo tiene sentido si no hemos recibido más de lo solicitado
+            BigDecimal pendiente = this.pesoSolicitado.subtract(this.pesoTotalRecibido);
+            this.pesoPendiente = pendiente.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : pendiente;
+
+            // 2. Diferencia Real (Para liquidación)
+            this.diferenciaPeso = this.pesoTotalRecibido.subtract(this.pesoSolicitado);
+
+            // 3. Porcentaje de Desviación
+            this.porcentajeDesviacion = this.diferenciaPeso
+                    .divide(this.pesoSolicitado, 4, RoundingMode.HALF_UP)
+                    .multiply(new BigDecimal("100"));
+        }
+    }
+
     public void addParcialidad(ESolicitudParcialidad parcialidad) {
         parcialidades.add(parcialidad);
         parcialidad.setSolicitud(this);

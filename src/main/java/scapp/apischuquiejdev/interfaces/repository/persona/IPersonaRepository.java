@@ -30,4 +30,6 @@ public interface IPersonaRepository extends JpaRepository<EPersona, Long> {
             String primerApellido,
             Pageable pageable
     );
+
+    Optional<EPersona> findByEmailIgnoreCase(String email);
 }

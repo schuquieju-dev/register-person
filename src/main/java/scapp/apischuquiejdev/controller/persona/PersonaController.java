@@ -11,7 +11,6 @@ import scapp.apischuquiejdev.dto.persona.PersonaUpdateRequest;
 import scapp.apischuquiejdev.dto.response.ApiResponseDto;
 import scapp.apischuquiejdev.interfaces.services.persona.IPersonaService;
 
-
 @RestController
 @RequestMapping("/api/personas")
 public class PersonaController {
@@ -64,6 +63,20 @@ public class PersonaController {
 
         return ResponseEntity.ok(
                 ApiResponseDto.success("Persona actualizada correctamente.", response)
+        );
+    }
+
+    // =========================================================================
+    // NUEVO ENDPOINT: Requerido por el microservicio de apiauth
+    // =========================================================================
+    @GetMapping("/buscar")
+    public ResponseEntity<ApiResponseDto<PersonaResponse>> obtenerPorEmail(
+            @RequestParam("email") String email) {
+
+        PersonaResponse response = personaService.buscarPorEmail(email);
+
+        return ResponseEntity.ok(
+                ApiResponseDto.success("Persona localizada correctamente por email.", response)
         );
     }
 }

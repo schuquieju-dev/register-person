@@ -20,7 +20,7 @@ public class GlobalCorsConfig {
         config.setAllowCredentials(false); // Pon true si usas cookies o sesiones
         config.setAllowedOriginPatterns(Collections.singletonList("*"));
         config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "X-API-KEY", "Authorization"));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);

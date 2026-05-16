@@ -1,6 +1,5 @@
 package scapp.apischuquiejdev.mappers.persona;
 
-
 import org.springframework.stereotype.Component;
 import scapp.apischuquiejdev.dto.persona.PersonaCreateRequest;
 import scapp.apischuquiejdev.dto.persona.PersonaResponse;
@@ -47,24 +46,30 @@ public class PersonaMapper {
         }
     }
 
+    // =========================================================================
+    // MODERNIZADO: Usando el Builder de Lombok para un mapeo limpio y sin errores
+    // =========================================================================
     public PersonaResponse toResponse(EPersona entity) {
-        PersonaResponse response = new PersonaResponse();
-        response.setId(entity.getId());
-        response.setCui(entity.getCui());
-        response.setNit(entity.getNit());
-        response.setPrimerNombre(entity.getPrimerNombre());
-        response.setSegundoNombre(entity.getSegundoNombre());
-        response.setPrimerApellido(entity.getPrimerApellido());
-        response.setSegundoApellido(entity.getSegundoApellido());
-        response.setTelefono(entity.getTelefono());
-        response.setEmail(entity.getEmail());
-        response.setActivo(entity.getActivo());
-        response.setNombreCompleto(buildNombreCompleto(entity));
-        response.setSexo(entity.getSexo());
-        response.setFechaNacimiento(entity.getFechaNacimiento());
-        response.setDireccion(entity.getDireccion());
+        if (entity == null) {
+            return null;
+        }
 
-        return response;
+        return PersonaResponse.builder()
+                .id(entity.getId())
+                .cui(entity.getCui())
+                .nit(entity.getNit())
+                .primerNombre(entity.getPrimerNombre())
+                .segundoNombre(entity.getSegundoNombre())
+                .primerApellido(entity.getPrimerApellido())
+                .segundoApellido(entity.getSegundoApellido())
+                .telefono(entity.getTelefono())
+                .email(entity.getEmail())
+                .activo(entity.getActivo())
+                .nombreCompleto(buildNombreCompleto(entity))
+                .sexo(entity.getSexo())
+                .fechaNacimiento(entity.getFechaNacimiento())
+                .direccion(entity.getDireccion())
+                .build();
     }
 
     private String buildNombreCompleto(EPersona entity) {
@@ -79,7 +84,6 @@ public class PersonaMapper {
             }
             sb.append(entity.getSegundoNombre());
         }
-
 
         return sb.toString();
     }

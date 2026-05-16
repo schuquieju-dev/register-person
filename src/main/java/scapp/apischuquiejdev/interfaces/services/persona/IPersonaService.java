@@ -14,4 +14,6 @@ public interface IPersonaService {
     Page<PersonaResponse> listar(int page, int size, String sort, String search);
 
     PersonaResponse actualizar(Long id, PersonaUpdateRequest request);
+    PersonaResponse buscarPorEmail(String email);
+
 }

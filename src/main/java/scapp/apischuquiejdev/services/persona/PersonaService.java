@@ -14,6 +14,7 @@ import scapp.apischuquiejdev.entity.persona.EPersona;
 import scapp.apischuquiejdev.interfaces.repository.persona.IPersonaRepository;
 import scapp.apischuquiejdev.interfaces.services.persona.IPersonaService;
 import scapp.apischuquiejdev.mappers.persona.PersonaMapper;
+import scapp.apischuquiejdev.util.ResourceNotFoundException;
 
 
 @Service
@@ -158,4 +159,16 @@ public class PersonaService implements IPersonaService {
         }
         return value.toLowerCase();
     }
+
+
+    @Override
+    public PersonaResponse buscarPorEmail(String email) {
+        EPersona persona = personaRepository.findByEmailIgnoreCase(email.trim())
+                .orElseThrow(() -> new ResourceNotFoundException("Persona no encontrada con el email: " + email));
+
+        // El mapper hace toda la magia con el Builder en una sola línea
+        return personaMapper.toResponse(persona);
+    }
+
+
 }

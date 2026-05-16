@@ -1,5 +1,6 @@
 package scapp.apischuquiejdev.dto.persona;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import java.util.Date;
 
 @Getter
 @Setter
+@Builder
 public class PersonaResponse {
 
     private Long id;

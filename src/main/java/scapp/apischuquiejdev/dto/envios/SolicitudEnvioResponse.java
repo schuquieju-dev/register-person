@@ -15,13 +15,25 @@ public class SolicitudEnvioResponse {
     private Long id;
     private Long solicitudId;
     private Integer numeroEnvio;
+
+    // Datos del Transportista (Persona)
     private Long transportistaId;
+    private String transportistaNombre; // Nombre completo concatenado
+    private String licenciaNumero;
+    private String licenciaTipo;
+
+    // Datos del Transporte (y su Propietario)
     private Long transporteId;
+    private String transportePlaca;
+    private String transporteMarca;
+    private String transporteModelo;
+    private String propietarioNombre; // Dueño del transporte
+
+
+
     private LocalDateTime fechaSalida;
     private LocalDateTime fechaRecepcion;
-    private BigDecimal cantidadEnviada;
     private BigDecimal pesoEnviado;
-    private BigDecimal cantidadRecibida;
     private BigDecimal pesoRecibido;
     private BigDecimal diferenciaPeso;
     private BigDecimal porcentajeDiferencia;

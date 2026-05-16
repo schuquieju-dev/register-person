@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 public class SolicitudEnvioRecepcionRequest {
 
     private LocalDateTime fechaRecepcion;
-    private BigDecimal cantidadRecibida;
     private BigDecimal pesoRecibido;
     private String observacionesRecepcion;
 }
